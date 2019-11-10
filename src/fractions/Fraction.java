@@ -1,54 +1,54 @@
 package src.fractions;
 
 /**
-* Описывает дроби и операции над ними (сложение, вычитание, умножение, деление).
-*/
-public class Fraction {
+ * Описывает дроби и операции над ними (сложение, вычитание, умножение, деление).
+ */
+public class Fraction implements Comparable<Fraction>{
     private int numerator;
     private int denominator;
 
-	/**
-	* Метод-геттер для числителя.
-	*/
+    /**
+     * Метод-геттер для числителя.
+     */
     public int getNumerator() {
         return numerator;
     }
 
-	/**
-	* Метод-сеттер для числителя.
-	*/
+    /**
+     * Метод-сеттер для числителя.
+     */
     public void setNumerator(int numerator) {
         this.numerator = numerator;
     }
-	
-	/**
-	* Метод-геттер для знаменателя.
-	*/
+
+    /**
+     * Метод-геттер для знаменателя.
+     */
     public int getDenominator() {
         return denominator;
     }
 
-	/**
-	* Метод-сеттер для знаменателя.
-	*/
+    /**
+     * Метод-сеттер для знаменателя.
+     */
     public void setDenominator(int denominator) {
         this.denominator = denominator;
     }
 
-	/**
-	* Создаёт объект-дробь из целого числа.
-	* @param numerator целое число, из которого необходимо сделать дробь.
-	*/
+    /**
+     * Создаёт объект-дробь из целого числа.
+     * @param numerator целое число, из которого необходимо сделать дробь.
+     */
     public Fraction(int numerator) {
         this.numerator = numerator;
         denominator = 1;
     }
-	
-	/**
-	* Создаёт объект-дробь из двух чисел - числителя и знаменателя.
-	* @param numerator целое число - числитель.
-	* @param denominator целое число - знаменатель.
-	*/
+
+    /**
+     * Создаёт объект-дробь из двух чисел - числителя и знаменателя.
+     * @param numerator целое число - числитель.
+     * @param denominator целое число - знаменатель.
+     */
     public Fraction(int numerator, int denominator) {
         this.numerator = numerator;
         this.denominator = denominator;
@@ -105,9 +105,27 @@ public class Fraction {
             return new Fraction(denominator, numerator);
     }
 
-	/**
-	* Если возможно, сокращает дробь
-	*/
+    /**
+     * Сравнивает дробь с дробью, переданной в параметре.
+     * Возвращает 0, если дроби равны, -1, если данная дробь меньше переданной, и 1, если больше.
+     * @param anotherFraction дробь, с которой проводится сравнение.
+     */
+    @Override
+    public int compareTo(Fraction anotherFraction) {
+        double d1 = (double)(this.numerator) / (double)(this.denominator);
+        double d2 = (double)(anotherFraction.numerator) / (double)(anotherFraction.denominator);
+        if (d1 == d2) {
+            return 0;
+        } else if (d1 < d2) {
+            return -1;
+        } else {
+            return 1;
+        }
+    }
+
+    /**
+     * Если возможно, сокращает дробь
+     */
     public Fraction reduct() {
         int greatestCommonDivisor = greatestCommonDivisor(numerator, denominator);
         return new Fraction(numerator / greatestCommonDivisor, denominator / greatestCommonDivisor);
@@ -120,10 +138,10 @@ public class Fraction {
         }
     }
 
-	/**
-	* Складывает с дробью, переданной в параметре.
-	* @param f дробь, с которой производится сложение.
-	*/
+    /**
+     * Складывает с дробью, переданной в параметре.
+     * @param f дробь, с которой производится сложение.
+     */
     public Fraction sum(Fraction f) {
         if (denominator == f.denominator) {
             Fraction res = new Fraction(numerator + f.numerator, denominator).reduct();
@@ -137,29 +155,29 @@ public class Fraction {
             return res;
         }
     }
-	
-	/**
-	* Вычитает дробь, переданную в параметре.
-	* @param f дробь, которую вычитают.
-	*/
+
+    /**
+     * Вычитает дробь, переданную в параметре.
+     * @param f дробь, которую вычитают.
+     */
     public Fraction subtract(Fraction f) {
         return sum(new Fraction(-f.numerator, f.denominator));
     }
-	
-	/**
-	* Умножает на дробь, переданную в параметре
-	* @param f дробь, на которую умножают.
-	*/
+
+    /**
+     * Умножает на дробь, переданную в параметре
+     * @param f дробь, на которую умножают.
+     */
     public Fraction multiply(Fraction f) {
         Fraction res = new Fraction(numerator * f.numerator, denominator * f.denominator).reduct();
         res.checkAndChangeDenominatorSign();
         return res;
     }
-	
-	/**
-	* Делит на дробь, переданную в параметре.
-	* @param f дробь, на которую делят.
-	*/
+
+    /**
+     * Делит на дробь, переданную в параметре.
+     * @param f дробь, на которую делят.
+     */
     public Fraction divide(Fraction f) {
         return multiply(f.flip());
     }
