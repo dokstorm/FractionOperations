@@ -1,8 +1,14 @@
-import src.Fractions.Fraction;
-
+import src.fractions.Fraction;
 import java.util.Scanner;
 
+/**
+ * Реализует консольное приложение, позволяющее проводить действия над дробями.
+ */
 public class FractionOperations {
+    /**
+     * Проверяет, является ли переданная строка дробью.
+     * @param str строка для проверки
+     */
     public static boolean isFraction(String str) {
         if (str.matches("[-]?[0-9]+/[0-9]+")) {
             if (Integer.parseInt(str.substring(str.indexOf('/') + 1)) != 0)
@@ -18,14 +24,23 @@ public class FractionOperations {
         }
     }
 
+    /**
+     * Преобразует переданную строку в дробь.
+     * @param str строка для преобразования
+     */
     public static Fraction parseFraction(String str) {
         int slashpos = str.indexOf('/');
-        Fraction f = new Fraction();
-        f.setNumerator(Integer.parseInt(str.substring(0, slashpos)));
-        f.setDenominator(Integer.parseInt(str.substring(slashpos + 1)));
+        int numerator = Integer.parseInt(str.substring(0, slashpos));
+        int denominator = Integer.parseInt(str.substring(slashpos + 1));
+        Fraction f = new Fraction(numerator, denominator);
         return f;
     }
 
+    /**
+     * Проверяет, является ли переданная строка одной из операций.
+     * Операции - сложение "+", вычитание "-", умножение "*" или деление "/")
+     * @param str строка для проверки
+     */
     public static boolean isOperation(String str) {
         if (str.matches("[+-/*]{1}"))
             return true;
@@ -36,12 +51,18 @@ public class FractionOperations {
 
     }
 
+    /**
+     * Проводит переданное в строке действие над дробями
+     * @param f1 первая дробь
+     * @param f2 вторая дробь
+     * @param str строка, определяющая операцию
+     */
     public static Fraction parseOperation(Fraction f1, Fraction f2, String str) {
         switch (str) {
             case "+":
                 return f1.sum(f2);
             case "-":
-                return f1.sub(f2);
+                return f1.subtract(f2);
             case "*":
                 return f1.multiply(f2);
             default:
@@ -49,6 +70,10 @@ public class FractionOperations {
         }
     }
 
+    /**
+     * Отвечает за ввод дроби из консоли.
+     * Выполняется, пока введённое выражение не будет соответствовать виду дроби.
+     */
     public static Fraction inputFraction() {
         Scanner in = new Scanner(System.in);
         String s = in.nextLine();
@@ -59,6 +84,10 @@ public class FractionOperations {
         return parseFraction(s);
     }
 
+    /**
+     * Отвечает за ввод дроби из консоли.
+     * Выполняется, пока введённое выражение не будет соответствовать одной из возможных операций.
+     */
     public static Fraction inputOperation(Fraction f1, Fraction f2) {
         Scanner in = new Scanner(System.in);
         String s = in.nextLine();
@@ -68,6 +97,9 @@ public class FractionOperations {
         return parseOperation(f1, f2, s);
     }
 
+    /**
+     * Главный метод, запускающий на выполнение приложение.
+     */
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         System.out.println("Welcome. Possible operations with fractions: you can sum (+), subtract (-), " +
@@ -83,7 +115,7 @@ public class FractionOperations {
             Fraction f2 = inputFraction();
             System.out.println("Enter an operation:");
             System.out.println(inputOperation(f1, f2));
-            System.out.println("Press Enter to continue.");
+            System.out.println("Press Enter to continue or enter q to quit.");
         }
         in.close();
     }
