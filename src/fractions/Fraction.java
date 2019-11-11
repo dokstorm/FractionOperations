@@ -7,6 +7,66 @@ public class Fraction implements Comparable<Fraction>{
     private int numerator;
     private int denominator;
 
+    private enum Operation {
+        ADD("+") {
+            public Fraction apply(Fraction f1, Fraction f2) { return f1.sum(f2); }
+        },
+        SUB("-") {
+            public Fraction apply(Fraction f1, Fraction f2) { return f1.subtract(f2); }
+        },
+        MULT("*") {
+            public Fraction apply(Fraction f1, Fraction f2) { return f1.multiply(f2); }
+        },
+        DIV("/") {
+            public Fraction apply(Fraction f1, Fraction f2) { return f1.divide(f2); }
+        };
+
+        private String operation;
+        Operation(String operation) {
+            this.operation = operation;
+        }
+        public abstract Fraction apply(Fraction f1, Fraction f2);
+
+        public static Operation operationFromInput(String input) {
+            switch (input) {
+                case "+":
+                    return Operation.ADD;
+                case "-":
+                    return Operation.SUB;
+                case "*":
+                    return Operation.MULT;
+                case "/":
+                    return Operation.DIV;
+            }
+            throw new IllegalArgumentException(input + "is not an operation");
+        }
+    }
+
+    /**
+     * Проверяет, является ли переданная строка одной из операций.
+     * Операции - сложение "+", вычитание "-", умножение "*" или деление "/")
+     * @param str строка для проверки
+     */
+    public static boolean isOperation(String str) {
+        String operationRegex = "[+-/*]{1}";
+        if (str.matches(operationRegex))
+            return true;
+        else {
+            System.out.println("Expression is not an operation");
+            return false;
+        }
+    }
+    /**
+     * Проводит переданное в строке действие над дробями
+     * @param f1 первая дробь
+     * @param f2 вторая дробь
+     * @param str строка, определяющая операцию
+     */
+    public static Fraction parseOperation(Fraction f1, Fraction f2, String str) {
+        Operation operation = Operation.operationFromInput(str);
+        return operation.apply(f1, f2);
+    }
+
     /**
      * Метод-геттер для числителя.
      */
@@ -84,18 +144,18 @@ public class Fraction implements Comparable<Fraction>{
         return numerator + "/" + denominator;
     }
 
-    private int greatestCommonDivisor(int x, int y) {
+    private int greatestCommonDivisor(int firstNumeric, int secondNumeric) {
         int temp;
-        while (y != 0) {
-            temp = x % y;
-            x = y;
-            y = temp;
+        while (secondNumeric != 0) {
+            temp = firstNumeric % secondNumeric;
+            firstNumeric = secondNumeric;
+            secondNumeric = temp;
         }
-        return x;
+        return firstNumeric;
     }
 
-    private int leastCommonMultiple(int x, int y){
-        return x * y / greatestCommonDivisor(x, y);
+    private int leastCommonMultiple(int firstNumeric, int secondNumeric){
+        return firstNumeric * secondNumeric / greatestCommonDivisor(firstNumeric, secondNumeric);
     }
 
     private Fraction flip() {
@@ -180,5 +240,42 @@ public class Fraction implements Comparable<Fraction>{
      */
     public Fraction divide(Fraction f) {
         return multiply(f.flip());
+    }
+
+    /**
+     * Проверяет, является ли переданная строка дробью.
+     * @param str строка для проверки
+     */
+    public static boolean isFraction(String str) {
+        String fractionRegex = "[-]?[0-9]+/[0-9]+";
+        if (str.matches(fractionRegex)) {
+            if (Integer.parseInt(str.substring(str.indexOf('/') + 1)) != 0)
+                return true;
+            else {
+                System.out.println("Denominator can't be zero");
+                return false;
+            }
+        }
+        else {
+            System.out.println("Expression is not an fraction");
+            return false;
+        }
+    }
+
+    /**
+     * Преобразует переданную строку в дробь.
+     * @param str строка для преобразования
+     */
+    public static Fraction parseFraction(String str) {
+        if (isFraction(str)) {
+            int slashpos = str.indexOf('/');
+            int numerator = Integer.parseInt(str.substring(0, slashpos));
+            int denominator = Integer.parseInt(str.substring(slashpos + 1));
+            Fraction f = new Fraction(numerator, denominator);
+            return f;
+        }
+        else {
+            throw new IllegalArgumentException("For input string: \"" + str + "\"");
+        }
     }
 }
